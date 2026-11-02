@@ -1,0 +1,219 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#101820">
+<title>F1 Engineering Career Tracker</title>
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="icon.svg" type="image/svg+xml">
+<style>
+:root{--bg:#0b1118;--panel:#121d28;--panel2:#172431;--line:#263747;--text:#eef4f8;--muted:#9eb0bf;--red:#e53935;--green:#42c58a;--gold:#f3bd55;--blue:#6eb6ff}
+*{box-sizing:border-box}body{margin:0;background:linear-gradient(145deg,#0b1118,#101b26 55%,#0b1118);color:var(--text);font:15px/1.5 system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif}
+header{padding:26px max(18px,calc((100% - 1180px)/2));background:#101820;border-bottom:1px solid var(--line)}
+.kicker{color:var(--red);font-weight:800;letter-spacing:.16em;text-transform:uppercase;font-size:11px}
+h1{margin:5px 0 4px;font-size:clamp(25px,4vw,38px);line-height:1.12}header p{color:var(--muted);margin:8px 0 0;max-width:760px}
+.wrap{max-width:1180px;margin:auto;padding:20px 18px 60px}
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin:8px 0 18px}
+.stat,.card{background:var(--panel);border:1px solid var(--line);border-radius:15px;padding:16px}
+.stat strong{display:block;font-size:25px}.stat span{color:var(--muted);font-size:12px}
+.progress{height:9px;background:#263747;border-radius:20px;overflow:hidden;margin-top:10px}.progress>div{height:100%;width:0;background:linear-gradient(90deg,var(--red),#ff815c);transition:width .2s}
+.tabs{display:flex;gap:8px;overflow:auto;padding:4px 0 14px;position:sticky;top:0;background:#0d151e;z-index:5}
+.tab{border:1px solid var(--line);background:var(--panel);color:var(--muted);border-radius:999px;padding:9px 14px;white-space:nowrap;cursor:pointer;font-weight:650}
+.tab.active{background:var(--red);border-color:var(--red);color:white}
+h2{font-size:22px;margin:8px 0 12px}h3{font-size:16px;margin:0 0 8px}
+.muted{color:var(--muted)}.section{display:none}.section.active{display:block}
+.grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}
+.tasklist{display:grid;gap:8px}
+.task{display:flex;gap:10px;align-items:flex-start;padding:10px 11px;background:var(--panel2);border:1px solid #263747;border-radius:10px}
+.task input{accent-color:var(--green);width:17px;height:17px;margin-top:3px;flex:0 0 auto}
+.task label{cursor:pointer;flex:1}.task.done label{text-decoration:line-through;color:#8ca0ad}
+.small{font-size:12px;color:var(--muted)}
+.tag{display:inline-block;border:1px solid var(--line);border-radius:999px;padding:3px 8px;font-size:11px;color:var(--muted);margin:2px}
+input[type=text],input[type=number],textarea,select{width:100%;background:#0d1721;color:var(--text);border:1px solid var(--line);border-radius:9px;padding:10px;font:inherit}
+button{border:1px solid var(--line);border-radius:9px;background:var(--panel2);color:var(--text);padding:9px 12px;font-weight:650;cursor:pointer}
+button.primary{background:var(--red);border-color:var(--red)}button:hover{filter:brightness(1.12)}
+.row{display:flex;gap:8px;flex-wrap:wrap;align-items:center}.row>*{flex:1}
+.skill{display:grid;grid-template-columns:1fr 150px;gap:10px;align-items:center;padding:11px 0;border-bottom:1px solid var(--line)}
+.skill:last-child{border:0}.skill select{padding:7px}
+.phase{margin-bottom:15px}.phasehead{display:flex;justify-content:space-between;gap:12px;align-items:center;margin-bottom:10px}
+.barline{height:6px;background:#263747;border-radius:10px;overflow:hidden;flex:1;max-width:180px}.barline div{height:100%;background:var(--green)}
+textarea{min-height:90px;resize:vertical}
+footer{border-top:1px solid var(--line);padding:18px;color:var(--muted);text-align:center;font-size:12px}
+.notice{background:#182a32;border:1px solid #285444;border-radius:12px;padding:12px;color:#ccefe0;font-size:13px}
+@media(max-width:700px){.stats{grid-template-columns:repeat(2,1fr)}.grid{grid-template-columns:1fr}.wrap{padding:15px 12px 45px}.skill{grid-template-columns:1fr 125px}.stat strong{font-size:22px}}
+</style>
+</head>
+<body>
+<header>
+  <div class="kicker">Personal development dashboard</div>
+  <h1>F1 Engineering Career Tracker</h1>
+  <p>MIST IPE → Mechanical & Automotive Engineering → MSc Europe → Motorsport</p>
+</header>
+<main class="wrap">
+  <div class="stats">
+    <div class="stat"><strong id="overall">0%</strong><span>Roadmap completed</span><div class="progress"><div id="overallbar"></div></div></div>
+    <div class="stat"><strong id="donecount">0 / 0</strong><span>Tasks completed</span></div>
+    <div class="stat"><strong id="skillcount">0</strong><span>Skills marked proficient</span></div>
+    <div class="stat"><strong id="projectcount">0</strong><span>Projects completed</span></div>
+  </div>
+  <nav class="tabs" aria-label="Main sections">
+    <button class="tab active" data-tab="dashboard">Dashboard</button>
+    <button class="tab" data-tab="roadmap">Roadmap</button>
+    <button class="tab" data-tab="skills">Skills</button>
+    <button class="tab" data-tab="projects">Projects</button>
+    <button class="tab" data-tab="academics">Academics</button>
+    <button class="tab" data-tab="weekly">Weekly plan</button>
+    <button class="tab" data-tab="backup">Backup</button>
+  </nav>
+
+  <section class="section active" id="dashboard">
+    <h2>Your mission control</h2>
+    <div class="notice">Progress is saved automatically in this browser on this device. Use <b>Backup</b> to move your progress to another device.</div>
+    <div class="grid" style="margin-top:14px">
+      <div class="card"><h3>Next priorities</h3><div id="nexttasks" class="tasklist"></div></div>
+      <div class="card"><h3>Career principles</h3>
+        <ul class="muted" style="padding-left:19px;margin-bottom:0">
+          <li>Protect your MIST CGPA and engineering fundamentals.</li>
+          <li>Learn one CAD tool properly before collecting software names.</li>
+          <li>Build and document real engineering projects.</li>
+          <li>Seek Formula Student, vehicle projects and relevant internships.</li>
+          <li>Choose an MSc for curriculum, labs and motorsport links—not ranking alone.</li>
+        </ul>
+      </div>
+      <div class="card"><h3>Academic target</h3><div class="row"><div><label class="small" for="cgpa">Target CGPA</label><input id="cgpa" type="number" min="0" max="4" step=".01" value="3.5"></div><div><label class="small" for="currentcgpa">Current CGPA</label><input id="currentcgpa" type="number" min="0" max="4" step=".01" placeholder="Enter yours"></div></div><p class="small">Suggested ambition: 3.50–3.70+, not an official F1 hiring cutoff.</p></div>
+      <div class="card"><h3>Current focus</h3><p class="muted">Start with academic foundations, SolidWorks, engineering mechanics and a small documented CAD project. Add advanced tools gradually.</p><div class="tag">CAD</div><div class="tag">Mechanics</div><div class="tag">Portfolio</div><div class="tag">English</div></div>
+    </div>
+  </section>
+
+  <section class="section" id="roadmap">
+    <h2>University-to-motorsport roadmap</h2>
+    <p class="muted">Check tasks as you complete them. Adjust the stages to your actual degree timeline.</p>
+    <div id="roadmaplist"></div>
+  </section>
+
+  <section class="section" id="skills">
+    <h2>Technical skills tracker</h2>
+    <p class="muted">Update each skill as you progress. “Proficient” should mean you can use it independently on a real task.</p>
+    <div class="grid">
+      <div class="card"><h3>CAD & design</h3><div id="cadskills"></div></div>
+      <div class="card"><h3>Analysis & programming</h3><div id="analysisskills"></div></div>
+      <div class="card"><h3>Mechanical knowledge</h3><div id="mechskills"></div></div>
+      <div class="card"><h3>Manufacturing & professional</h3><div id="proskills"></div></div>
+    </div>
+  </section>
+
+  <section class="section" id="projects">
+    <h2>Engineering portfolio</h2>
+    <p class="muted">For each project, save the CAD files, calculations, drawings, assumptions, results and a short technical report.</p>
+    <div id="projectlist" class="grid"></div>
+    <div class="card" style="margin-top:14px"><h3>My project notes</h3><textarea id="projectnotes" placeholder="Ideas, links, feedback, next steps..."></textarea></div>
+  </section>
+
+  <section class="section" id="academics">
+    <h2>Academic & career preparation</h2>
+    <div class="grid">
+      <div class="card"><h3>Academic targets</h3><div id="academiclist" class="tasklist"></div></div>
+      <div class="card"><h3>Internships & experience</h3><div id="careerlist" class="tasklist"></div></div>
+      <div class="card"><h3>Certifications</h3><div id="certlist" class="tasklist"></div></div>
+      <div class="card"><h3>International MSc preparation</h3><div id="msclist" class="tasklist"></div></div>
+    </div>
+  </section>
+
+  <section class="section" id="weekly">
+    <h2>Weekly development plan</h2>
+    <p class="muted">A suggested 8–10 hour plan outside your academic workload. Reduce it during exam weeks.</p>
+    <div class="card"><div id="weeklylist" class="tasklist"></div></div>
+    <div class="card" style="margin-top:14px"><h3>Weekly review</h3><label class="small" for="review">What did I learn? What blocked me? What will I do next week?</label><textarea id="review" placeholder="Write your weekly reflection..."></textarea></div>
+  </section>
+
+  <section class="section" id="backup">
+    <h2>Backup & device transfer</h2>
+    <div class="notice">This version stores data locally in your browser. It does not automatically sync between your phone and laptop. Export a backup here, then import that file on your other device.</div>
+    <div class="card" style="margin-top:14px">
+      <h3>Export your progress</h3><p class="muted">Download a JSON backup containing completed tasks, skill levels, notes and targets.</p>
+      <button class="primary" id="export">Download backup</button>
+    </div>
+    <div class="card" style="margin-top:14px">
+      <h3>Import a previous backup</h3><p class="muted">Importing replaces the progress currently saved in this browser.</p>
+      <input type="file" id="importfile" accept=".json,application/json">
+      <button id="import" style="margin-top:9px">Import backup</button>
+    </div>
+    <div class="card" style="margin-top:14px">
+      <h3>Reset tracker</h3><p class="muted">This clears all locally saved progress. Export a backup first if you may need it.</p>
+      <button id="reset">Reset all progress</button>
+    </div>
+  </section>
+</main>
+<footer>F1 Engineering Career Tracker · Personal learning tool · Not affiliated with any Formula 1 team</footer>
+<script>
+const roadmap = [
+["Phase 1 · Foundation","Build strong fundamentals and start creating",[
+"Maintain a target CGPA of 3.50+ (personal target, not an employer cutoff)","Learn SolidWorks part modelling, assemblies and drawings","Prepare for the CSWA exam","Learn advanced Excel for engineering work","Learn Python fundamentals","Study engineering mechanics and mathematics properly","Read about Formula car mechanical systems","Complete two small CAD projects","Create a professional LinkedIn profile"
+]],
+["Phase 2 · Mechanical expertise","Move from basic CAD to engineering design",[
+"Learn CATIA V5: Part Design and Assembly Design","Prepare for CSWP","Study Strength of Materials","Study Machine Design","Learn GD&T and engineering tolerances","Learn basic ANSYS static structural analysis","Study suspension geometry and steering basics","Complete a double-wishbone suspension CAD project","Enter an engineering design competition","Find a Formula Student or vehicle-project opportunity"
+]],
+["Phase 3 · Specialisation","Develop analysis ability and practical experience",[
+"Learn MATLAB and Simulink fundamentals","Develop advanced CATIA skills","Learn FEA setup, meshing and result interpretation","Study vehicle dynamics and tyre fundamentals","Study composites and material selection","Complete two or three substantial engineering projects","Join a real vehicle or Formula Student project if possible","Complete an industrial or research internship","Research relevant MSc programmes and prerequisites"
+]],
+["Phase 4 · International readiness","Prepare a strong application and technical profile",[
+"Complete a motorsport-related undergraduate thesis or capstone","Publish a polished engineering portfolio","Obtain academic recommendation letters","Prepare for IELTS or required English test","Check MSc prerequisite-credit compatibility","Research scholarships and funding","Apply for automotive/mechanical MSc programmes","Apply for relevant internships and graduate opportunities","Practise technical interviews and project presentations"
+]],
+["Phase 5 · MSc and early career","Build a route into motorsport engineering",[
+"Choose a programme with relevant labs, projects and industry links","Join a Formula Student team or equivalent vehicle project","Gain research or industrial experience","Build relationships with motorsport and automotive engineers","Apply to motorsport suppliers and vehicle R&D teams","Apply for F1 graduate and junior engineering roles","Check work eligibility and export-control restrictions for each role"
+]]
+];
+const skillGroups = {
+cadskills:["SolidWorks","CATIA V5","Siemens NX","Engineering drawings"],
+analysisskills:["ANSYS / FEA","MATLAB & Simulink","Python","Excel","CFD fundamentals"],
+mechskills:["Engineering mechanics","Strength of materials","Machine design","Vehicle dynamics","Suspension & steering","Transmission & gears","Materials & composites"],
+proskills:["GD&T","CNC / manufacturing processes","DFM / DFA","Quality & statistics","Technical writing & presentations","Teamwork & engineering communication"]
+};
+const projects = [
+["Mechanical component design","Design a shaft, bearing housing and gear assembly. Include drawings, materials and tolerances."],
+["Formula car suspension","Create a simplified double-wishbone suspension assembly and explain its geometry."],
+["Structural analysis","Run a justified FEA study on a component. Explain loads, constraints, mesh and limitations."],
+["Steering system","Model a simplified steering assembly and explain its motion and design decisions."],
+["Formula Student car concept","Develop a conceptual single-seater CAD assembly with integration and manufacturing considerations."]
+];
+const lists = {
+academiclist:["Keep CGPA at or above my chosen target","Prioritise mechanics, mathematics and materials","Build a strong understanding of machine design","Keep course projects and lab reports organised","Discuss relevant research/project opportunities with faculty"],
+careerlist:["Explore Formula Student and university vehicle teams","Seek automotive/manufacturing internships","Attend engineering and motorsport webinars","Connect with engineers and alumni professionally","Keep a record of project contributions and outcomes"],
+certlist:["Complete SolidWorks CSWA preparation","Attempt CSWA when genuinely ready","Build skills before attempting CSWP","Complete relevant CATIA training","Learn GD&T through a practical course","Consider Six Sigma only when relevant"],
+msclist:["Shortlist automotive/mechanical MSc programmes","Check IPE-to-MSc prerequisite credit requirements","Compare modules, labs and Formula Student access","Research DAAD and university scholarships","Prepare IELTS and application documents","Check living costs, visa and work rules"]
+};
+const weekly = [
+["Monday","SolidWorks / CATIA practice","1 hour"],
+["Tuesday","Mechanical engineering fundamentals","1 hour"],
+["Wednesday","Python / MATLAB / Excel","1 hour"],
+["Thursday","CAD project development","1.5 hours"],
+["Friday","Automotive engineering study","1 hour"],
+["Saturday","Portfolio project and engineering report","2 hours"],
+["Sunday","English practice and weekly review","1 hour"]
+];
+const defaultState={checks:{},skills:{},notes:{projectnotes:"",review:""},targets:{cgpa:"3.5",currentcgpa:""}};
+let state=load();
+function load(){try{return {...defaultState,...JSON.parse(localStorage.getItem("f1careertracker")||"{}")}}catch(e){return structuredClone(defaultState)}}
+function save(){localStorage.setItem("f1careertracker",JSON.stringify(state));updateStats()}
+function esc(s){return String(s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]))}
+function taskHTML(text,key){let done=!!state.checks[key];return `<div class="task ${done?'done':''}"><input type="checkbox" id="${esc(key)}" data-check="${esc(key)}" ${done?'checked':''}><label for="${esc(key)}">${esc(text)}</label></div>`}
+function renderTaskList(id,items,prefix){document.getElementById(id).innerHTML=items.map((x,i)=>taskHTML(x,prefix+"-"+i)).join("")}
+function renderRoadmap(){document.getElementById("roadmaplist").innerHTML=roadmap.map((p,i)=>{let keys=p[2].map((_,j)=>`road-${i}-${j}`),done=keys.filter(k=>state.checks[k]).length;return `<div class="card phase"><div class="phasehead"><div><h3>${esc(p[0])}</h3><div class="small">${esc(p[1])}</div></div><div style="text-align:right;min-width:90px"><b>${done}/${keys.length}</b><div class="barline"><div style="width:${done/keys.length*100}%"></div></div></div></div><div class="tasklist">${p[2].map((x,j)=>taskHTML(x,keys[j])).join("")}</div></div>`}).join("")}
+function renderSkills(){for(const [id,items] of Object.entries(skillGroups)){document.getElementById(id).innerHTML=items.map((s,i)=>{let k="skill-"+id+"-"+i,v=state.skills[k]||"Not started";return `<div class="skill"><div><b>${esc(s)}</b></div><select data-skill="${esc(k)}"><option ${v==="Not started"?"selected":""}>Not started</option><option ${v==="Learning"?"selected":""}>Learning</option><option ${v==="Practised"?"selected":""}>Practised</option><option ${v==="Proficient"?"selected":""}>Proficient</option></select></div>`}).join("")}}
+function renderProjects(){document.getElementById("projectlist").innerHTML=projects.map((p,i)=>`<div class="card"><h3>${esc("Project "+(i+1)+" — "+p[0])}</h3><p class="muted">${esc(p[1])}</p>${taskHTML("Project completed","project-"+i)}<label class="small" for="pnote-${i}">Project notes / link</label><textarea id="pnote-${i}" data-note="project-"+i placeholder="Add progress, files, report link or feedback...">${esc(state.notes["project-"+i]||"")}</textarea></div>`).join("")}
+function renderAll(){renderRoadmap();renderSkills();renderProjects();for(const [id,items] of Object.entries(lists))renderTaskList(id,items,id);document.getElementById("weeklylist").innerHTML=weekly.map((w,i)=>`<div class="task"><input type="checkbox" id="week-${i}" data-check="week-${i}" ${state.checks["week-"+i]?"checked":""}><label for="week-${i}"><b>${esc(w[0])}</b> — ${esc(w[1])}<div class="small">${esc(w[2])}</div></label></div>`).join("");document.getElementById("projectnotes").value=state.notes.projectnotes||"";document.getElementById("review").value=state.notes.review||"";document.getElementById("cgpa").value=state.targets.cgpa??"3.5";document.getElementById("currentcgpa").value=state.targets.currentcgpa??"";updateStats();renderNext()}
+function allTasks(){let a=[];roadmap.forEach((p,i)=>p[2].forEach((x,j)=>a.push([x,`road-${i}-${j}`])));Object.entries(lists).forEach(([id,items])=>items.forEach((x,i)=>a.push([x,id+"-"+i])));projects.forEach((p,i)=>a.push([p[0],`project-${i}`]));weekly.forEach((w,i)=>a.push([w[0]+" — "+w[1],`week-${i}`]));return a}
+function updateStats(){let a=allTasks(),d=a.filter(x=>state.checks[x[1]]).length,p=Math.round(d/a.length*100);document.getElementById("overall").textContent=p+"%";document.getElementById("overallbar").style.width=p+"%";document.getElementById("donecount").textContent=d+" / "+a.length;document.getElementById("skillcount").textContent=Object.values(state.skills).filter(x=>x==="Proficient").length;document.getElementById("projectcount").textContent=projects.filter((_,i)=>state.checks["project-"+i]).length}
+function renderNext(){let next=allTasks().filter(x=>!state.checks[x[1]]).slice(0,5);document.getElementById("nexttasks").innerHTML=next.length?next.map(x=>taskHTML(x[0],x[1])).join(""):'<p class="muted">All listed tasks are complete. Review your next career milestone.</p>'}
+document.addEventListener("click",e=>{let b=e.target.closest("[data-tab]");if(b){document.querySelectorAll(".tab").forEach(x=>x.classList.toggle("active",x===b));document.querySelectorAll(".section").forEach(x=>x.classList.toggle("active",x.id===b.dataset.tab));}});
+document.addEventListener("change",e=>{if(e.target.dataset.check){state.checks[e.target.dataset.check]=e.target.checked;save();renderRoadmap();renderNext();}if(e.target.dataset.skill){state.skills[e.target.dataset.skill]=e.target.value;save();}if(e.target.id==="cgpa"||e.target.id==="currentcgpa"){state.targets[e.target.id]=e.target.value;save();}});
+document.addEventListener("input",e=>{if(e.target.dataset.note){state.notes[e.target.dataset.note]=e.target.value;save()}if(e.target.id==="projectnotes"||e.target.id==="review"){state.notes[e.target.id]=e.target.value;save()}});
+document.getElementById("export").onclick=()=>{let blob=new Blob([JSON.stringify(state,null,2)],{type:"application/json"}),a=document.createElement("a");a.href=URL.createObjectURL(blob);a.download="f1-engineering-tracker-backup.json";a.click();URL.revokeObjectURL(a.href)};
+document.getElementById("import").onclick=()=>{let f=document.getElementById("importfile").files[0];if(!f)return alert("Choose a backup JSON file first.");let r=new FileReader();r.onload=()=>{try{let x=JSON.parse(r.result);if(!x.checks||!x.skills)throw Error();state={...defaultState,...x};save();renderAll();alert("Backup imported successfully.")}catch(e){alert("That file doesn't look like a valid tracker backup.")}};r.readAsText(f)};
+document.getElementById("reset").onclick=()=>{if(confirm("Clear all saved progress on this device? This cannot be undone unless you exported a backup.")){state=structuredClone(defaultState);save();renderAll()}};
+if("serviceWorker" in navigator && location.protocol.startsWith("http"))navigator.serviceWorker.register("./sw.js").catch(()=>{});
+renderAll();
+</script>
+</body>
+</html>
